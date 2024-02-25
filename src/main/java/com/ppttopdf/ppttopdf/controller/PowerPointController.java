@@ -56,4 +56,20 @@ public class PowerPointController {
 
         return file;
     }
+
+    @PostMapping("/mergeAndConvert")
+    public ResponseEntity<File> mergeAndConvertPowerPointFiles(@RequestParam("files") List<MultipartFile> powerpointFiles) {
+        // Convert MultipartFiles to regular Files
+        List<File> files = convertMultipartFiles(powerpointFiles);
+
+        // Use PowerPointService to merge PowerPoint files
+        File mergedPowerPointFile = powerPointService.mergePowerPointFiles(files);
+
+        // Use PowerPointService to convert the merged PowerPoint file to PDF
+        File pdfFile = powerPointService.convertToPdf(mergedPowerPointFile);
+
+        // Return the resulting PDF file
+        return ResponseEntity.ok(pdfFile);
+    }
+
 }
