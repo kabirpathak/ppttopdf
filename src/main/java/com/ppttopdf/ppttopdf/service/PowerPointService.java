@@ -6,19 +6,13 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.FileOutputStream;
 
 import java.time.LocalDateTime;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-
-// ...
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -96,55 +90,53 @@ public class PowerPointService {
         }
     }
 
-
     public File convertToPdf(File mergedPowerPointFile) {
-      try {
-        // Load the merged PowerPoint file
-        XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(mergedPowerPointFile));
+        try {
+            // Load the merged PowerPoint file
+            XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(mergedPowerPointFile));
 
-        // Create a PDF document
-        PDDocument pdfDocument = new PDDocument();
+            // Create a PDF document
+            PDDocument pdfDocument = new PDDocument();
 
-        // Iterate through slides and add them to the PDF document
-        for (XSLFSlide slide : ppt.getSlides()) {
-            // Create a PDF page for each slide
-            PDPage page = new PDPage();
-            pdfDocument.addPage(page);
+            // Iterate through slides and add them to the PDF document
+            for (XSLFSlide slide : ppt.getSlides()) {
+                // Create a PDF page for each slide
+                PDPage page = new PDPage();
+                pdfDocument.addPage(page);
 
-            // Create content stream to write on the PDF page
-            PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, page);
+                // Create content stream to write on the PDF page
+                PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, page);
 
-            // Extract text content from the slide and write it to the PDF page
-            String content = extractContentFromSlide(slide);
+                // Extract text content from the slide and write it to the PDF page
+                String content = extractContentFromSlide(slide);
 
-            // Split content into lines
-            String[] lines = content.split("\n");
+                // Split content into lines
+                String[] lines = content.split("\n");
 
-            // Set font and initial position
-            contentStream.beginText();
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
-            contentStream.newLineAtOffset(10, 700); // Adjust the position as needed
+                // Set font and initial position
+                contentStream.beginText();
+                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
+                contentStream.newLineAtOffset(10, 700); // Adjust the position as needed
 
-            // Write each line with adjusted position
-            for (String line : lines) {
-                contentStream.showText(line);
-                contentStream.newLineAtOffset(0, -12); // Adjust the vertical offset as needed
+                // Write each line with adjusted position
+                for (String line : lines) {
+                    contentStream.showText(line);
+                    contentStream.newLineAtOffset(0, -12); // Adjust the vertical offset as needed
+                }
+
+                contentStream.endText();
+                contentStream.close();
             }
 
-            contentStream.endText();
-            contentStream.close();
+            // Save the PDF document to a file
+            File pdfFile = new File("output" + LocalDateTime.now() + ".pdf");
+            pdfDocument.save(pdfFile);
+            pdfDocument.close();
+
+            return pdfFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null; // Handle the exception appropriately
         }
-
-        // Save the PDF document to a file
-        File pdfFile = new File("output" + LocalDateTime.now() + ".pdf");
-        pdfDocument.save(pdfFile);
-        pdfDocument.close();
-
-        return pdfFile;
-      } catch (IOException e) {
-        e.printStackTrace();
-        return null; // Handle the exception appropriately
-      }
     }
-
 }
