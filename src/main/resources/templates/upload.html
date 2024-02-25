@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1>Upload PowerPoint Files</h1>
-<form th:action="@{/api/powerpoint/read}" method="post" enctype="multipart/form-data">
+<form th:action="@{/api/powerpoint/mergeAndConvert}" method="post" enctype="multipart/form-data">
     <input type="file" name="files" multiple>
     <button type="submit">Upload</button>
 </form>

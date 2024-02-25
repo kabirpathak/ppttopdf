@@ -17,6 +17,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 @Service
 public class PowerPointService {
@@ -106,10 +107,10 @@ public class PowerPointService {
                 PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, page);
 
                 // Extract text content from the slide and write it to the PDF page
-                String content = extractContentFromSlide(slide);
+                String content = extractContentFromSlide(slide).replace("\n", "").replace("\r", "");
                 contentStream.beginText();
                 contentStream.newLineAtOffset(10, 700); // Adjust the position as needed
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
                 contentStream.showText(content);
                 contentStream.endText();
 

@@ -5,12 +5,18 @@
     <title>PowerPoint File Upload</title>
 </head>
 <body>
-<h2>PowerPoint File Upload</h2>
+    <h2>PowerPoint File Upload</h2>
 
-<form th:action="@{/api/powerpoint/mergeAndConvert}" method="post" enctype="multipart/form-data">
-    <label for="mergeFiles">Select PowerPoint files to merge and convert:</label>
-    <input type="file" id="mergeFiles" name="files" multiple>
-    <button type="submit">Merge and Convert to PDF</button>
-</form>
+    <form th:action="@{/api/powerpoint/read}" method="post" enctype="multipart/form-data">
+        <label for="files">Select PowerPoint files:</label>
+        <input type="file" id="files" name="files" multiple>
+        <button type="submit">Read PowerPoint Files</button>
+    </form>
+
+    <form th:action="@{/api/powerpoint/mergeAndConvert}" method="post" enctype="multipart/form-data">
+        <label for="mergeFiles">Select PowerPoint files to merge and convert:</label>
+        <input type="file" id="mergeFiles" name="files" multiple>
+        <button type="submit">Merge and Convert to PDF</button>
+    </form>
 </body>
 </html>
