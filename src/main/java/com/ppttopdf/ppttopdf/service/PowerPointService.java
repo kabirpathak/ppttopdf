@@ -13,6 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.FileOutputStream;
 
+import java.time.LocalDateTime;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+
+// ...
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -89,43 +96,55 @@ public class PowerPointService {
         }
     }
 
+
     public File convertToPdf(File mergedPowerPointFile) {
-        try {
-            // Load the merged PowerPoint file
-            XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(mergedPowerPointFile));
+      try {
+        // Load the merged PowerPoint file
+        XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(mergedPowerPointFile));
 
-            // Create a PDF document
-            PDDocument pdfDocument = new PDDocument();
+        // Create a PDF document
+        PDDocument pdfDocument = new PDDocument();
 
-            // Iterate through slides and add them to the PDF document
-            for (XSLFSlide slide : ppt.getSlides()) {
-                // Create a PDF page for each slide
-                PDPage page = new PDPage();
-                pdfDocument.addPage(page);
+        // Iterate through slides and add them to the PDF document
+        for (XSLFSlide slide : ppt.getSlides()) {
+            // Create a PDF page for each slide
+            PDPage page = new PDPage();
+            pdfDocument.addPage(page);
 
-                // Create content stream to write on the PDF page
-                PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, page);
+            // Create content stream to write on the PDF page
+            PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, page);
 
-                // Extract text content from the slide and write it to the PDF page
-                String content = extractContentFromSlide(slide).replace("\n", "").replace("\r", "");
-                contentStream.beginText();
-                contentStream.newLineAtOffset(10, 700); // Adjust the position as needed
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
-                contentStream.showText(content);
-                contentStream.endText();
+            // Extract text content from the slide and write it to the PDF page
+            String content = extractContentFromSlide(slide);
 
-                contentStream.close();
+            // Split content into lines
+            String[] lines = content.split("\n");
+
+            // Set font and initial position
+            contentStream.beginText();
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
+            contentStream.newLineAtOffset(10, 700); // Adjust the position as needed
+
+            // Write each line with adjusted position
+            for (String line : lines) {
+                contentStream.showText(line);
+                contentStream.newLineAtOffset(0, -12); // Adjust the vertical offset as needed
             }
 
-            // Save the PDF document to a file
-            File pdfFile = new File("convertedPresentation.pdf");
-            pdfDocument.save(pdfFile);
-            pdfDocument.close();
-
-            return pdfFile;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null; // Handle the exception appropriately
+            contentStream.endText();
+            contentStream.close();
         }
+
+        // Save the PDF document to a file
+        File pdfFile = new File("output" + LocalDateTime.now() + ".pdf");
+        pdfDocument.save(pdfFile);
+        pdfDocument.close();
+
+        return pdfFile;
+      } catch (IOException e) {
+        e.printStackTrace();
+        return null; // Handle the exception appropriately
+      }
     }
+
 }
