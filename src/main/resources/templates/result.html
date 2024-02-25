@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PowerPoint File Upload</title>
+</head>
+<body>
+<h2>PowerPoint File Upload</h2>
+
+<form th:action="@{/api/powerpoint/mergeAndConvert}" method="post" enctype="multipart/form-data">
+    <label for="mergeFiles">Select PowerPoint files to merge and convert:</label>
+    <input type="file" id="mergeFiles" name="files" multiple>
+    <button type="submit">Merge and Convert to PDF</button>
+</form>
+</body>
+</html>
